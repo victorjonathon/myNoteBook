@@ -46,4 +46,40 @@ router.post('/createuser',[
     }
 });
 
+//Authenticate user using: POST "/api/auth/login". No login required.
+router.post('/login',[
+    body('email', 'Please enter a valid email.').isEmail(),
+    body('password', 'Password must have minimum 5 letters').isLength({ min: 5 })
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try{
+        const {email, password} = req.body;
+        const user = await User.findOne({email});
+        console.log(user);
+        if(!user){
+            res.status(500).json('Wrong email or password.');
+        }else{
+            const passCompare = await bcrypt.compare(password, user.password);
+
+            if(passCompare){
+                const data = {
+                    id: user.id
+                };
+                const authToken = jwt.sign(data, JWT_SECRET);
+                res.status(200).json({authToken})
+            }else{
+                res.status(500).json('Wrong email or password.');
+            }
+            
+        }
+    }catch(error){
+        console.log(error);
+        res.status(500).json(error.message);
+    }
+});
+
 module.exports = router;
