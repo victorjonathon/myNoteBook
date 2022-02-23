@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const NotesSchema = new Schema({
     title: {
@@ -19,4 +20,4 @@ const NotesSchema = new Schema({
     }
 });
 
-module.exports = mongoose.Schema('notes', NotesSchema);
+module.exports = mongoose.model('notes', NotesSchema);
