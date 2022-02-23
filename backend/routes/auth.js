@@ -5,6 +5,7 @@ const { body, validationResult } = require('express-validator');
 const { ResultWithContext } = require('express-validator/src/chain');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const fetchuser = require('../middleware/fetchuser');
 
 const JWT_SECRET = "This$@Azc@O0Kyc#!";
 
@@ -33,7 +34,9 @@ router.post('/createuser',[
                 password: userPass
             }).then(user => {
                 const data = {
-                    id: user.id
+                    user:{
+                        id: user.id
+                    }
                 };
                 const authToken = jwt.sign(data, JWT_SECRET);
                 res.status(200).json({authToken})})
@@ -67,7 +70,9 @@ router.post('/login',[
 
             if(passCompare){
                 const data = {
-                    id: user.id
+                    user:{
+                        id: user.id
+                    }
                 };
                 const authToken = jwt.sign(data, JWT_SECRET);
                 res.status(200).json({authToken})
@@ -76,6 +81,18 @@ router.post('/login',[
             }
             
         }
+    }catch(error){
+        console.log(error);
+        res.status(500).json(error.message);
+    }
+});
+
+//Get user using: POST "/api/auth/getuser". Login required.
+router.post('/getuser', fetchuser, async (req, res) => {
+    try{
+        const userId = req.user.id;
+        const user = await User.findById(userId).select('-password');
+        res.status(200).json({user});
     }catch(error){
         console.log(error);
         res.status(500).json(error.message);
