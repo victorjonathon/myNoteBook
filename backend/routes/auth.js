@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const { body, validationResult } = require('express-validator');
-const { ResultWithContext } = require('express-validator/src/chain');
+//const { ResultWithContext } = require('express-validator/src/chain');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fetchuser = require('../middleware/fetchuser');
@@ -83,7 +83,7 @@ router.post('/login',[
         }
     }catch(error){
         console.log(error);
-        res.status(500).json(error.message);
+        res.status(500).json('Internal server error.');
     }
 });
 
