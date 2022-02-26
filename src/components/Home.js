@@ -1,6 +1,12 @@
+import AddNote from "./AddNote";
+import Notes from "./Notes";
+
 const Home = () => {
-    return(
-        <p>This is home content</p>
+    return (
+        <>
+            <AddNote/>
+            <Notes/>
+        </>
     )
 }
 
