@@ -37,7 +37,7 @@ router.post('/addnote',fetchuser, [
         const noteObj = Note({
             user, title, description, tag
         });
-        console.log(noteObj);
+        
         const saveNote = await noteObj.save();
     
         res.status(200).json({saveNote});

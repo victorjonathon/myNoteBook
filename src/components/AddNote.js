@@ -1,11 +1,17 @@
+import { useContext, useState } from "react";
+import noteContext from "../context/notes/noteContext"; 
+
 const AddNote = ()=>{
+    const [note, setNote] = useState({title: "", description: "", tag: "Default"});
+    const { addNewNote } =  useContext(noteContext);
+
     const handleChange = (e)=>{
-        e.target.name = e.target.value;
+        setNote({...note, [e.target.name]: e.target.value})
     }
 
     const handleSubmit = (e)=>{
         e.preventDefault();
-        console.log();
+        addNewNote(note.title, note.description, note.tag);
     }
 
     return (

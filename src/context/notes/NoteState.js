@@ -13,23 +13,59 @@ const NoteState = (props)=>{
       axios.get(`${host}/api/notes/fetchallnotes`, {
           headers: {
               'Content-Type': 'application/json',
-              'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjIxNjE2OTdmZTkxZjI1MTYzNzA4MzlhIn0sImlhdCI6MTY0NTg2OTQyOX0.59Izsao40Y4_pts3A8uxtXNWyHv2fbCJfnGcBnd5tes'
+              'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjIxNjE2YzFmZTkxZjI1MTYzNzA4MzllIn0sImlhdCI6MTY0NTk0MzUyNX0.1Ozi6Esoc5mBDiTHPcSk6a5h9EPDgmaEZWkGEhET3vA'
           }
       })
       .then((response)=>{
           setNotes(response.data.notes)
-
       }).catch(function (error) {
           console.log(error);
       })
-    } 
+    }
+    
+    //Function to add new note
+    const addNewNote = (title, description, tag)=>{
+      //console.log(title, description, tag);
+      const noteObj = {title, description, tag};
+      axios.post(`${host}/api/notes/addnote`, noteObj, {
+        headers: {
+            'Content-Type': 'application/json',
+            'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjIxNjE2YzFmZTkxZjI1MTYzNzA4MzllIn0sImlhdCI6MTY0NTk0MzUyNX0.1Ozi6Esoc5mBDiTHPcSk6a5h9EPDgmaEZWkGEhET3vA'
+        }
+      })
+      .then((response)=>{
+          console.log(response.data);
+          fetchAllNotes();
+      }).catch(function (error) {
+          console.log(error);
+      })
+    }
+
+    //Function to DELETE a note
+    const deleteNote = (id)=>{
+        //console.log(id);
+        axios.delete(`${host}/api/notes/deletenote/${id}`, {
+          headers: {
+              'Content-Type': 'application/json',
+              'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjIxNjE2YzFmZTkxZjI1MTYzNzA4MzllIn0sImlhdCI6MTY0NTk0MzUyNX0.1Ozi6Esoc5mBDiTHPcSk6a5h9EPDgmaEZWkGEhET3vA'
+          }
+        })
+        .then((response)=>{
+            //console.log(response.data);
+            fetchAllNotes();
+        }).catch(function (error) {
+            console.log(error);
+        })
+      }
     
     return(
         <NoteContext.Provider 
             value={{
                     notes,
                     setNotes,
-                    fetchAllNotes
+                    fetchAllNotes,
+                    addNewNote,
+                    deleteNote
                 }}>
             
             {props.children}
