@@ -55,6 +55,9 @@ router.post('/login',[
     body('password', 'Password must have minimum 5 letters').isLength({ min: 5 })
 ], async (req, res) => {
     const errors = validationResult(req);
+    const success = false;
+    const message = "";
+
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
@@ -62,9 +65,9 @@ router.post('/login',[
     try{
         const {email, password} = req.body;
         const user = await User.findOne({email});
-        console.log(user);
+        //console.log(user);
         if(!user){
-            res.status(500).json('Wrong email or password.');
+            res.status(500).json({success:false, message:'Wrong email or password.'});
         }else{
             const passCompare = await bcrypt.compare(password, user.password);
 
@@ -75,9 +78,9 @@ router.post('/login',[
                     }
                 };
                 const authToken = jwt.sign(data, JWT_SECRET);
-                res.status(200).json({authToken})
+                res.status(200).json({success:true, accessToken:authToken})
             }else{
-                res.status(500).json('Wrong email or password.');
+                res.status(500).json({success:false, message:'Wrong email or password.'});
             }
             
         }
