@@ -12,6 +12,7 @@ const AddNote = ()=>{
     const handleSubmit = (e)=>{
         e.preventDefault();
         addNewNote(note.title, note.description, note.tag);
+        setNote({title: "", description: "", tag: ""});
     }
 
     return (
@@ -20,11 +21,15 @@ const AddNote = ()=>{
                 <form>
                     <div className="mb-3">
                         <label htmlFor="title" className="form-label">Title</label>
-                        <input type="email" className="form-control" id="title" name="title" onChange={handleChange}/>
+                        <input type="text" className="form-control" id="title" name="title" value={note.title} onChange={handleChange} minLength={3} required/>
                     </div>
                     <div className="mb-3">
                         <label htmlFor="description" className="form-label">Description</label>
-                        <textarea className="form-control" id="description" name="description" onChange={handleChange}></textarea>
+                        <textarea className="form-control" id="description" name="description" value={note.description} onChange={handleChange}></textarea>
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="title" className="form-label">Tag</label>
+                        <input type="text" className="form-control" id="tag" name="tag" value={note.tag} onChange={handleChange}/>
                     </div>
                     <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Add Note</button>
                 </form>
