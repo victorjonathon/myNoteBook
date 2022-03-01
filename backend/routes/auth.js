@@ -15,7 +15,8 @@ router.post('/createuser',[
     body('email', 'Please enter a valid email.').isEmail(),
     body('password', 'Password must have minimum 5 letters').isLength({ min: 5 })
 ], async (req, res) => {
-    const errors = validationResult(req);
+    let success = false;
+    let errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
@@ -24,7 +25,7 @@ router.post('/createuser',[
         let user = await User.findOne({email: req.body.email });
         
         if(user){
-            res.status(400).json('A user with this Email already exist.')
+            res.status(401).json({success:false, message: 'A user with this Email already exist.'})
         }else{
             let salt = bcrypt.genSaltSync(10);
             let userPass = bcrypt.hashSync(req.body.password, salt);
@@ -39,13 +40,13 @@ router.post('/createuser',[
                     }
                 };
                 const authToken = jwt.sign(data, JWT_SECRET);
-                res.status(200).json({authToken})})
+                res.status(200).json({success:true, token: authToken})})
             .catch(err=> { console.log(err.message)
-                res.json('Some error occurred.')});
+                res.statue(401).json({success:false, message: 'Some error occurred.'});
+            });
         }
     }catch(error){
-        console.log(error);
-        res.status(500).json(error.message);
+        res.status(500).json({success:false, message:'Internal server error.'});
     }
 });
 
@@ -67,7 +68,7 @@ router.post('/login',[
         const user = await User.findOne({email});
         //console.log(user);
         if(!user){
-            res.status(500).json({success:false, message:'Wrong email or password.'});
+            res.status(401).json({success:false, message:'Wrong email or password.'});
         }else{
             const passCompare = await bcrypt.compare(password, user.password);
 
@@ -77,16 +78,16 @@ router.post('/login',[
                         id: user.id
                     }
                 };
-                const authToken = jwt.sign(data, JWT_SECRET);
-                res.status(200).json({success:true, accessToken:authToken})
+                const authtoken = jwt.sign(data, JWT_SECRET);
+                res.status(200).json({success:true, authtoken:authtoken})
             }else{
                 res.status(500).json({success:false, message:'Wrong email or password.'});
             }
             
         }
     }catch(error){
-        console.log(error);
-        res.status(500).json('Internal server error.');
+        //console.log(error);
+        res.status(500).json({success:false, message:'Internal server error.'});
     }
 });
 
@@ -98,7 +99,7 @@ router.post('/getuser', fetchuser, async (req, res) => {
         res.status(200).json({user});
     }catch(error){
         console.log(error);
-        res.status(500).json(error.message);
+        res.status(500).json({success:false, message:'Internal server error.'});
     }
 });
 

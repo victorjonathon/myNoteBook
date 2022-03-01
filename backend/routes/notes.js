@@ -82,23 +82,23 @@ router.put('/updatenote/:id',fetchuser, async (req, res) => {
 router.delete('/deletenote/:id',fetchuser, async (req, res) => {
     try{
         const userId = await req.user.id;
+        let success = false;
 
         let note = await Note.findById(req.params.id);
         if(!note){
             res.status(404).send('Not Found');
         }else{
             if(note.user.toString() !== userId){
-                res.status(404).send('Not Allowed');
+                res.status(401).send({success, message: 'Access Not Allowed'});
             }else{
-                const updateNote = await Note.findByIdAndDelete(req.params.id);
-        
-                res.status(200).json({success: "Note Deleted Successfully!", note: note});
+                const deleteNote = await Note.findByIdAndDelete(req.params.id);
+                res.status(200).json({success: true, message: "Note Deleted Successfully!", note: note});
             }
         }
         
     }catch(error){
-        console.log(error);
-        res.status(500).json(error.message);
+        //console.log(error);
+        res.status(500).json({success:false, message:'Internal server error.'});
     }
 });
 

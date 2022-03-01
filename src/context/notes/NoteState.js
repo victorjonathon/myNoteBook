@@ -13,7 +13,7 @@ const NoteState = (props)=>{
       axios.get(`${host}/api/notes/fetchallnotes`, {
           headers: {
               'Content-Type': 'application/json',
-              'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjIxNjE2YzFmZTkxZjI1MTYzNzA4MzllIn0sImlhdCI6MTY0NTk0MzUyNX0.1Ozi6Esoc5mBDiTHPcSk6a5h9EPDgmaEZWkGEhET3vA'
+              'auth-token': localStorage.getItem('token')
           }
       })
       .then((response)=>{
@@ -30,7 +30,7 @@ const NoteState = (props)=>{
       axios.post(`${host}/api/notes/addnote`, noteObj, {
         headers: {
             'Content-Type': 'application/json',
-            'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjIxNjE2YzFmZTkxZjI1MTYzNzA4MzllIn0sImlhdCI6MTY0NTk0MzUyNX0.1Ozi6Esoc5mBDiTHPcSk6a5h9EPDgmaEZWkGEhET3vA'
+            'auth-token': localStorage.getItem('token')
         }
       })
       .then((response)=>{
@@ -48,7 +48,7 @@ const NoteState = (props)=>{
         axios.put(`${host}/api/notes/updatenote/${id}`, noteObj, {
           headers: {
               'Content-Type': 'application/json',
-              'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjIxNjE2YzFmZTkxZjI1MTYzNzA4MzllIn0sImlhdCI6MTY0NTk0MzUyNX0.1Ozi6Esoc5mBDiTHPcSk6a5h9EPDgmaEZWkGEhET3vA'
+              'auth-token': localStorage.getItem('token')
           }
         })
         .then((response)=>{
@@ -65,14 +65,18 @@ const NoteState = (props)=>{
         axios.delete(`${host}/api/notes/deletenote/${id}`, {
           headers: {
               'Content-Type': 'application/json',
-              'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjIxNjE2YzFmZTkxZjI1MTYzNzA4MzllIn0sImlhdCI6MTY0NTk0MzUyNX0.1Ozi6Esoc5mBDiTHPcSk6a5h9EPDgmaEZWkGEhET3vA'
+              'auth-token': localStorage.getItem('token')
           }
         })
         .then((response)=>{
-            //console.log(response.data);
+            if(response.data.success){
+                alert(response.data.message);
+            }
             fetchAllNotes();
         }).catch(function (error) {
-            console.log(error);
+            if(!error.response.data.success){
+                alert(error.response.data.message)
+            }
         })
       }
     

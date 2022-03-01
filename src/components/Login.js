@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import loginLeftImg from '../img/login-left-img.webp';
 
-const Login = () => {
+const Login = (props) => {
     const host = 'http://localhost:5000';
     const [credentials, setCredentials] = useState({email: "", password: ""});
+    const navigate = useNavigate();
     
     const handleChange = (e)=>{
         setCredentials({...credentials, [e.target.name]: e.target.value});        
@@ -21,10 +23,20 @@ const Login = () => {
         })
         .then(response => {
             /*!response.data.success && setfailedLogin(true);*/
+            if(response.data.success){
+                localStorage.setItem('token', response.data.authtoken);
+                navigate('/');
+                props.showAlert('Login successful.', 'success');
+            }else{
+                alert('Wrong email or password!')
+            }
             console.log(response.data);
         })
         .catch(function (error) {
-            console.log(error);
+            if(!error.response.data.success){
+                //alert(error.response.data.message)
+                props.showAlert(error.response.data.message, 'danger');
+            }
         })
     }
 
