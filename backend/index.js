@@ -12,6 +12,7 @@ app.use(express.json());
 //Routes
 app.use('/api/auth/', require('./routes/auth'));
 app.use('/api/notes/', require('./routes/notes'));
+app.use('/api/common/', require('./routes/common'));
 
 app.listen(port, () => {
     console.log(`myNoteBook App listening on port: ${port}`);
