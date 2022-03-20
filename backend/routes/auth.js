@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const User = require('../models/User');
 const { body, validationResult } = require('express-validator');
@@ -6,8 +7,12 @@ const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fetchuser = require('../middleware/fetchuser');
+const multer = require('multer');
+const fs = require('fs');
 
 const JWT_SECRET = "This$@Azc@O0Kyc#!";
+
+
 
 //Create user using: POST "/api/auth/createuser". No login required.
 router.post('/createuser',[
@@ -93,10 +98,65 @@ router.post('/login',[
 
 //Get user using: POST "/api/auth/getuser". Login required.
 router.post('/getuser', fetchuser, async (req, res) => {
+    const success = false;
+    const message = "";
     try{
         const userId = req.user.id;
         const user = await User.findById(userId).select('-password');
-        res.status(200).json({user});
+        res.status(200).json({success:true, user});
+    }catch(error){
+        console.log(error);
+        res.status(500).json({success:false, message:'Internal server error.'});
+    }
+});
+
+const storage = multer.diskStorage({
+    destination: (req, file, callback) =>{
+        callback(null, './public/user-profile');
+    },
+    filename: (req, file, callback) =>{
+        callback(null, file.originalname.toLowerCase().replace(/:/g, '-').split(' ').join('-'));
+    }
+});
+
+const fileFilter = (req, file, callback) =>{
+    if(file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg'){
+        callback(null, true);
+    }else{
+        callback(null, false);
+    }
+}
+
+const upload = multer({ storage: storage, fileFilter: fileFilter });
+
+router.put('/updateuser', fetchuser, upload.single('picture'), async (req, res)=>{
+    const success = false;
+    const message = '';
+   
+    try{
+        const userId = req.user.id;
+        const user = await User.findById(userId).select('-password');
+        if(req.file){
+            if(user.picture){
+                const oldPicFullPath = await './public/user-profile/'+user.picture;
+                fs.unlinkSync(oldPicFullPath);
+            }
+        }
+        
+        const updateUser = User.updateOne({_id: userId}, {
+            name: req.body.name,
+            email: req.body.email,
+            picture: req.file && req.file.filename
+        }).then(user => {
+            const data = {
+                user:{
+                    id: user.id
+                }
+            };
+            res.status(200).json({success:true, message: 'user updated successfully'})})
+        .catch(err=> { console.log(err.message)
+            res.status(401).json({success:false, message: 'Some error occurred.'});
+        });
     }catch(error){
         console.log(error);
         res.status(500).json({success:false, message:'Internal server error.'});

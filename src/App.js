@@ -5,6 +5,7 @@ import About from './components/About';
 import Contact from './components/Contact';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import Profile from './components/Profile';
 import Alert from "./components/Alert";
 import Footer from "./components/Footer";
 import { useState } from 'react';
@@ -40,6 +41,7 @@ function App() {
               <Route path="/contact" element={<Contact showAlert={showAlert} />} />
               <Route path="/login" element={<Login showAlert={showAlert} />} />
               <Route path="/signup" element={<Signup showAlert={showAlert} />} />
+              <Route path="/profile" element={<Profile showAlert={showAlert} />} />
             </Routes>
           </div>
           <Footer/>

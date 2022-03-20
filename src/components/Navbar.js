@@ -38,10 +38,11 @@ const Navbar = (props) => {
                         :
                         <li className="nav-item dropdown">
                             <button className="btn btn-sm btn-primary text-light nav-link dropdown-toggle mx-2" id="navbarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                Welcome abord
+                                Welcome Abord
                             </button>
                             <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li className="dropdown-item cursor-pointer" onClick={handleLogout}>Logout</li>
+                                <Link className="dropdown-item cursor-pointer" to="/profile">Profile</Link>
                             </ul>
                         </li>
                     }
